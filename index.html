@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Álbum Panini 2026 - Honduras</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
+        h1 { text-align: center; color: #022055; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #666; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; }
+        
+        .stats { display: flex; justify-content: center; gap: 15px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; font-weight: bold; }
+        .stats div { text-align: center; font-size: 0.9em; }
+        
+        .instrucciones { text-align: center; font-size: 0.9em; color: #022055; background: #e8eaf6; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+        .cat-btn { padding: 10px 15px; border: none; border-radius: 5px; background: #ddd; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.2s; }
+        .cat-btn.active { background: #022055; color: white; }
+        
+        .cat-btn.faltan { background: #ffebee; color: #c62828; border: 1px solid #ef5350; }
+        .cat-btn.faltan.active { background: #c62828; color: white; }
+        .cat-btn.trade { background: #ff9800; color: white; }
+        .cat-btn.trade.active { background: #e65100; }
+        
+        .grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; padding-top: 10px; }
+        
+        .sticker-wrapper { position: relative; display: inline-block; }
+        
+        .sticker { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 6px; cursor: pointer; user-select: none; font-size: 0.9em; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: 0.2s; }
+        
+        .falta { background-color: #ffebee; border: 2px solid #ef5350; color: #c62828; }
+        .tengo { background-color: #e8f5e9; border: 2px solid #66bb6a; color: #2e7d32; }
+        .repetida { background-color: #e3f2fd; border: 2px solid #42a5f5; color: #1565c0; }
+        
+        .badge { font-size: 0.7em; background: #1565c0; color: white; border-radius: 50%; padding: 1px 5px; margin-top: 2px; }
+        
+        .sticker.activo { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-color: #ff9800; }
+
+        .mini-btn { position: absolute; width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; color: white; font-weight: bold; font-size: 1.3em; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; padding: 0; line-height: 1; }
+        .mini-btn:active { transform: scale(0.9); }
+        .mini-btn.minus { top: -12px; left: -12px; background: #ef5350; }
+        .mini-btn.plus { top: -12px; right: -12px; background: #66bb6a; }
+        
+        .section-title { width: 100%; margin-top: 25px; color: #022055; border-bottom: 2px solid #ccc; padding-bottom: 5px; font-size: 1.2em; font-weight: bold; }
+
+        #panel-intercambio { display: none; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .box-intercambio { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; text-align: center; }
+        textarea { width: 100%; height: 60px; margin-top: 10px; padding: 10px; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; resize: none; font-family: monospace; font-size: 1.1em; font-weight: bold; }
+        select { width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1em; font-weight: bold; }
+        button.action-btn { background: #022055; color: white; border: none; padding: 12px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; max-width: 300px; font-size: 1em; }
+        button.action-btn.green { background: #2e7d32; }
+        
+        #qr-container { display: none; text-align: center; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc; }
+        #qrcode { display: flex; justify-content: center; padding: 15px; background: white; border-radius: 8px; display: inline-block; margin-bottom: 10px; }
+
+        .resultados { margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800; display: none; text-align: left; }
+        .resultados h3 { margin-top: 0; color: #e65100; }
+    </style>
+</head>
+<body>
+
+    <h1>🏆 Álbum Panini 2026</h1>
+    <p class="subtitle">Edición Honduras</p>
+    
+    <div class="stats" id="stats"></div>
+
+    <div class="instrucciones">
+        👆 <b>Toca una vista</b> para mostrar los botones de <b>➕ y ➖</b>
+    </div>
+
+    <div class="categories" id="categories">
+        <button class="cat-btn active" onclick="mostrarCategoria('todas')">Ver Todo</button>
+        <button class="cat-btn faltan" onclick="mostrarCategoria('faltantes')">Me Faltan ❌</button>
+        <button class="cat-btn" onclick="mostrarCategoria('intro')">Intro</button>
+        <button class="cat-btn" onclick="mostrarCategoria('equipos')">Equipos</button>
+        <button class="cat-btn" onclick="mostrarCategoria('coca')">Coca-Cola</button>
+        <button class="cat-btn trade" onclick="mostrarCategoria('intercambio')">Compartir & Intercambios 🤝</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div id="panel-intercambio">
+        <h2>Herramientas de Intercambio 🔄</h2>
+        
+        <div class="box-intercambio" style="background: #e8f5e9; border-color: #66bb6a;">
+            <h3 style="color: #2e7d32; margin-top: 0;">1. Exportar Listas para WhatsApp 📲</h3>
+            <p style="text-align: left; font-size: 0.9em; color: #333;">Genera una lista con emojis perfecta para enviar por chat.</p>
+            
+            <select id="tipoLista">
+                <option value="falta">❌ Las vistas que ME FALTAN</option>
+                <option value="repes">🔄 Mis vistas REPETIDAS</option>
+                <option value="tengo">✅ Las vistas que YA TENGO</option>
+            </select>
+            
+            <button class="action-btn green" onclick="compartirListaTexto()">Generar y Compartir Lista</button>
+        </div>
+
+        <div class="box-intercambio">
+            <h3>2. App a App (Código o QR)</h3>
+            <p style="text-align: left; font-size: 0.9em; color: #555;">Si tu amigo también usa esta app, envíale este código o muéstrale el QR para que crucen datos automáticamente.</p>
+            <button class="action-btn" onclick="generarMiCodigo()">Generar mi código de App</button>
+            <textarea id="miCodigo" readonly placeholder="Tu código aparecerá aquí..."></textarea>
+            <button class="action-btn" onclick="copiarCodigo()" style="background: #ff9800;">Copiar Código</button>
+            
+            <div id="qr-container">
+                <div id="qrcode"></div>
+                <button class="action-btn green" id="btnShareQR" style="display:none; margin: 0 auto;" onclick="descargarQR()">Descargar QR (Imagen) 📥</button>
+            </div>
+        </div>
+
+        <div class="box-intercambio">
+            <h3>3. Compara con un amigo</h3>
+            <p style="text-align: left; font-size: 0.9em; color: #555;">Pega aquí el "Código de App" que te envió tu amigo (no la lista de texto).</p>
+            <textarea id="codigoAmigo" placeholder="Pega el código aquí..."></textarea>
+            <button class="action-btn" onclick="compararCodigo()">Buscar Intercambios Automáticos</button>
+        </div>
+
+        <div id="resultadosIntercambio" class="resultados">
+            <h3>¡Análisis Completo! 🎉</h3>
+            <p><b>👉 Pídele a tu amigo (A ti te faltan, él las tiene repetidas):</b></p>
+            <p id="meSirven" style="font-weight: bold; color: #c62828;"></p>
+            <hr>
+            <p><b>🎁 Ofrécele a tu amigo (Él las necesita, tú las tienes repetidas):</b></p>
+            <p id="leSirven" style="font-weight: bold; color: #1565c0;"></p>
+        </div>
+    </div>
+
+    <script>
+        const equipos = [
+           "Alemania",
+        "Arabia Saudita",
+        "Argelia",
+        "Argentina",
+        "Australia",
+        "Austria",
+        "Bélgica",
+        "Bosnia y Herzegovina",
+        "Brasil",
+        "Cabo Verde",
+        "Canadá",
+        "Colombia",
+        "Corea del Sur",
+        "Croacia",
+        "Curazao",
+        "Czechia",
+        "DR Congo",
+        "Egipto",
+        "Ecuador",
+        "España",
+        "Estados Unidos",
+        "Francia",
+        "Haití",
+        "Inglaterra",
+        "Irak",
+        "Irán",
+        "Japón",
+        "Jordania",
+        "Marruecos",
+        "México",
+        "Nigeria",
+        "Noruega",
+        "Nueva Zelanda",
+        "Países Bajos",
+        "Panamá",
+        "Paraguay",
+        "Polonia",
+        "Portugal",
+        "Qatar",
+        "Scotland",
+        "Senegal",
+        "Serbia",
+        "Sudáfrica",
+        "Suecia",
+        "Suiza",
+        "Túnez",
+        "Turquía",
+        "Uzbekistán"
+    ];
+
+        // Mapeo exacto de banderas para cada equipo
+        const banderas = [
+            "🇩🇪",
+        "🇸🇦",
+        "🇩🇿",
+        "🇦🇷",
+        "🇦🇺",
+        "🇦🇹",
+        "🇧🇪",
+        "🇧🇦",
+        "🇧🇷",
+        "🇨🇻",
+        "🇨🇦",
+        "🇨🇴",
+        "🇰🇷",
+        "🇭🇷",
+        "🇨🇼",
+        "🇨🇿",
+        "🇨🇩",
+        "🇪🇬",
+        "🇪🇨",
+        "🇪🇸",
+        "🇺🇸",
+        "🇫🇷",
+        "🇭🇹",
+        "🏴",
+        "🇮🇶",
+        "🇮🇷",
+        "🇯🇵",
+        "🇯🇴",
+        "🇲🇦",
+        "🇲🇽",
+        "🇳🇬",
+        "🇳🇴",
+        "🇳🇿",
+        "🇳🇱",
+        "🇵🇦",
+        "🇵🇾",
+        "🇵🇱",
+        "🇵🇹",
+        "🇶🇦",
+        "🏴",
+        "🇸🇳",
+        "🇷🇸",
+        "🇿🇦",
+        "🇸🇪",
+        "🇨🇭",
+        "🇹🇳",
+        "🇹🇷",
+        "🇺🇿"
+        ];
+
+        const VISTAS_NORMALES = 980;
+        const VISTAS_COCA = 12;
+        const TOTAL = VISTAS_NORMALES + VISTAS_COCA;
+        
+        let datos = JSON.parse(localStorage.getItem('hn_panini_26_v2')) || Array(TOTAL).fill(0);
+        let vistaActual = 'todas';
+        let stickerActivo = null;
+        let stickerElements = Array(TOTAL).fill(null);
+        let qrcodeInstance = null; 
+
+        function getNumeroEtiqueta(index) {
+            if (index < 20) return (index + 1).toString();
+            if (index >= 980) return 'C' + (index - 979).toString();
+            return (((index - 20) % 20) + 1).toString();
+        }
+
+        function getNombreVista(index) {
+            if (index < 20) return "Intro " + (index + 1);
+            if (index >= 980) return "Coca-Cola C" + (index - 979);
+            let equipoIndex = Math.floor((index - 20) / 20);
+            return equipos[equipoIndex] + " " + (((index - 20) % 20) + 1);
+        }
+
+        function actualizarEstadisticas() {
+            let faltan = 0, tengo = 0, repetidas = 0;
+            datos.forEach(c => {
+                if (c === 0) faltan++;
+                if (c > 0) tengo++;
+                if (c > 1) repetidas += (c - 1);
+            });
+            document.getElementById('stats').innerHTML = `
+                <div>❌ Faltan<br>${faltan}</div>
+                <div>✅ Pegadas<br>${tengo}</div>
+                <div>🔄 Repetidas<br>${repetidas}</div>
+            `;
+        }
+
+        function actualizarAspectoSticker(index) {
+            let wrapper = stickerElements[index];
+            if (!wrapper) return;
+            let div = wrapper.firstChild; 
+            if (!div) return;
+
+            let cantidad = datos[index];
+            let label = getNumeroEtiqueta(index);
+            let estadoClase = cantidad === 0 ? 'falta' : (cantidad === 1 ? 'tengo' : 'repetida');
+            let activoClase = stickerActivo === index ? 'activo' : '';
+            
+            div.className = `sticker ${estadoClase} ${activoClase}`;
+            
+            if (cantidad < 2) {
+                div.innerHTML = `<span>${label}</span>`;
+            } else {
+                div.innerHTML = `<span>${label}</span><span class="badge">+${cantidad - 1}</span>`;
+            }
+        }
+
+        function seleccionarSticker(index) {
+            const viejoActivo = stickerActivo;
+            
+            if (stickerActivo === index) {
+                stickerActivo = null;
+            } else {
+                stickerActivo = index;
+            }
+
+            if (viejoActivo !== null && stickerElements[viejoActivo]) {
+                actualizarAspectoSticker(viejoActivo);
+                const wrapper = stickerElements[viejoActivo];
+                const btns = wrapper.querySelectorAll('.mini-btn');
+                btns.forEach(b => b.remove());
+            }
+
+            if (stickerActivo !== null && stickerElements[stickerActivo]) {
+                actualizarAspectoSticker(stickerActivo);
+                const wrapper = stickerElements[stickerActivo];
+                
+                const btnMinus = document.createElement('button');
+                btnMinus.className = 'mini-btn minus';
+                btnMinus.innerHTML = '−';
+                btnMinus.onclick = (e) => cambiarCantidad(e, stickerActivo, -1);
+
+                const btnPlus = document.createElement('button');
+                btnPlus.className = 'mini-btn plus';
+                btnPlus.innerHTML = '+';
+                btnPlus.onclick = (e) => cambiarCantidad(e, stickerActivo, 1);
+
+                wrapper.appendChild(btnMinus);
+                wrapper.appendChild(btnPlus);
+            }
+        }
+
+        function cambiarCantidad(e, index, delta) {
+            e.stopPropagation(); 
+            if (datos[index] + delta >= 0) {
+                datos[index] += delta;
+                localStorage.setItem('hn_panini_26_v2', JSON.stringify(datos));
+                
+                actualizarAspectoSticker(index);
+                actualizarEstadisticas();
+
+                if (vistaActual === 'faltantes' && datos[index] > 0) {
+                    setTimeout(() => { renderizarGrid(); }, 300);
+                }
+            }
+        }
+
+        function crearElementoSticker(index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'sticker-wrapper';
+            wrapper.onclick = () => seleccionarSticker(index);
+            
+            const div = document.createElement('div');
+            wrapper.appendChild(div);
+            
+            stickerElements[index] = wrapper;
+            actualizarAspectoSticker(index); 
+
+            if (stickerActivo === index) {
+                const btnMinus = document.createElement('button');
+                btnMinus.className = 'mini-btn minus';
+                btnMinus.innerHTML = '−';
+                btnMinus.onclick = (e) => cambiarCantidad(e, index, -1);
+
+                const btnPlus = document.createElement('button');
+                btnPlus.className = 'mini-btn plus';
+                btnPlus.innerHTML = '+';
+                btnPlus.onclick = (e) => cambiarCantidad(e, index, 1);
+
+                wrapper.appendChild(btnMinus);
+                wrapper.appendChild(btnPlus);
+            }
+
+            return wrapper;
+        }
+
+        function agregarTitulo(texto, contenedor) {
+            const titulo = document.createElement('div');
+            titulo.className = 'section-title';
+            titulo.innerText = texto;
+            contenedor.appendChild(titulo);
+        }
+
+        function renderizarGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            stickerElements.fill(null); 
+            
+            actualizarEstadisticas();
+
+            if (vistaActual === 'faltantes') {
+                let faltanIntro = [];
+                for(let i=0; i<20; i++) if(datos[i] === 0) faltanIntro.push(i);
+                if (faltanIntro.length > 0) {
+                    agregarTitulo("🌟 Especiales, Estadios e Historia", grid);
+                    faltanIntro.forEach(i => grid.appendChild(crearElementoSticker(i)));
+                }
+
+                equipos.forEach((equipo, i) => {
+                    let faltanEquipo = [];
+                    const startIndex = 20 + (i * 20);
+                    for(let j=0; j<20; j++) if(datos[startIndex + j] === 0) faltanEquipo.push(startIndex + j);
+                    
+                    if (faltanEquipo.length > 0) {
+                        agregarTitulo(`⚽ ${equipo}`, grid);
+                        faltanEquipo.forEach(idx => grid.appendChild(crearElementoSticker(idx)));
+                    }
+                });
+
+                let faltanCoca = [];
+                for(let i=980; i<TOTAL; i++) if(datos[i] === 0) faltanCoca.push(i);
+                if (faltanCoca.length > 0) {
+                    agregarTitulo("🥤 Exclusivas Coca-Cola", grid);
+                    faltanCoca.forEach(i => grid.appendChild(crearElementoSticker(i)));
+                }
+                
+                if(faltanIntro.length === 0 && faltanCoca.length === 0 && !datos.slice(20,980).includes(0)) {
+                    grid.innerHTML = '<div style="width: 100%; text-align: center; margin-top: 50px; font-size: 1.5em; color: #2e7d32;">¡Felicidades! 🎉 Tienes el álbum completo.</div>';
+                }
+                return; 
+            }
+
+            if (vistaActual === 'todas' || vistaActual === 'intro') {
+                agregarTitulo("🌟 Especiales, Estadios e Historia", grid);
+                for(let i=0; i<20; i++) grid.appendChild(crearElementoSticker(i));
+            }
+
+            if (vistaActual === 'todas' || vistaActual === 'equipos') {
+                equipos.forEach((equipo, i) => {
+                    agregarTitulo(`${banderas[i]} ${equipo}`, grid);
+                    const startIndex = 20 + (i * 20);
+                    for(let j=0; j<20; j++) {
+                        grid.appendChild(crearElementoSticker(startIndex + j));
+                    }
+                });
+            }
+
+            if (vistaActual === 'todas' || vistaActual === 'coca') {
+                agregarTitulo("🥤 Exclusivas Coca-Cola", grid);
+                for(let i=980; i<TOTAL; i++) grid.appendChild(crearElementoSticker(i));
+            }
+        }
+
+        function mostrarCategoria(cat) {
+            vistaActual = cat;
+            stickerActivo = null; 
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (cat === 'intercambio') {
+                document.getElementById('grid').style.display = 'none';
+                document.getElementById('panel-intercambio').style.display = 'block';
+            } else {
+                document.getElementById('grid').style.display = 'flex';
+                document.getElementById('panel-intercambio').style.display = 'none';
+                renderizarGrid(); 
+            }
+        }
+
+        /* --- NUEVO: COMPARTIR LISTA DE TEXTO POR WHATSAPP --- */
+        function compartirListaTexto() {
+            let tipo = document.getElementById('tipoLista').value;
+            let titulo = tipo === 'falta' ? '❌ Busco (Me Faltan):' : (tipo === 'repes' ? '🔄 Ofrezco (Tengo Repetidas):' : '✅ Ya tengo:');
+            
+            let grupos = {
+                intro: [],
+                equipos: Array(48).fill(null).map(() => []),
+                coca: []
+            };
+
+            // Clasificar la información
+            datos.forEach((cant, i) => {
+                let incluir = false;
+                if(tipo === 'falta' && cant === 0) incluir = true;
+                if(tipo === 'tengo' && cant > 0) incluir = true;
+                if(tipo === 'repes' && cant > 1) incluir = true;
+
+                if(incluir) {
+                    if(i < 20) grupos.intro.push(i + 1);
+                    else if(i >= 980) grupos.coca.push('C' + (i - 979));
+                    else {
+                        let eqIdx = Math.floor((i - 20) / 20);
+                        let num = ((i - 20) % 20) + 1;
+                        grupos.equipos[eqIdx].push(num);
+                    }
+                }
+            });
+
+            // Armar el texto
+            let texto = `🏆 Mi Álbum Panini 2026\n${titulo}\n\n`;
+            let itemsEncontrados = false;
+
+            if(grupos.intro.length > 0) {
+                texto += `🌟 Intro/Especiales: ${grupos.intro.join(', ')}\n`;
+                itemsEncontrados = true;
+            }
+            
+            grupos.equipos.forEach((arr, idx) => {
+                if(arr.length > 0) {
+                    texto += `${banderas[idx]} ${equipos[idx]}: ${arr.join(', ')}\n`;
+                    itemsEncontrados = true;
+                }
+            });
+
+            if(grupos.coca.length > 0) {
+                texto += `🥤 Coca-Cola: ${grupos.coca.join(', ')}\n`;
+                itemsEncontrados = true;
+            }
+
+            if (!itemsEncontrados) {
+                texto += "¡Lista vacía en esta categoría! 🎉";
+            } else {
+                texto += `\nGenerado desde mi Tracker Panini ⚽`;
+            }
+
+            // Intentar abrir el menú de compartir nativo del celular
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mi Álbum Panini',
+                    text: texto
+                }).catch((error) => console.log('Error compartiendo', error));
+            } else {
+                // Si está en PC o navegador incompatible, copiar al portapapeles
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert("¡Lista copiada con éxito! Ya puedes ir a WhatsApp y darle a 'Pegar'.");
+                }).catch(err => {
+                    alert("Hubo un error copiando el texto.");
+                });
+            }
+        }
+
+        /* --- LÓGICA DE CÓDIGO APP A APP --- */
+        function comprimirDatos(arr) {
+            let res = "P26:";
+            let count = 1;
+            let current = arr[0] > 1 ? 2 : arr[0];
+            for(let i = 1; i < arr.length; i++) {
+                let val = arr[i] > 1 ? 2 : arr[i];
+                if (val === current) {
+                    count++;
+                } else {
+                    res += count + (current === 0 ? 'F' : (current === 1 ? 'T' : 'R'));
+                    current = val;
+                    count = 1;
+                }
+            }
+            res += count + (current === 0 ? 'F' : (current === 1 ? 'T' : 'R'));
+            return res;
+        }
+
+        function descomprimirDatos(str) {
+            let arr = [];
+            let regex = /(\d+)([FTR])/g;
+            let match;
+            while ((match = regex.exec(str)) !== null) {
+                let len = parseInt(match[1]);
+                let val = match[2] === 'F' ? 0 : (match[2] === 'T' ? 1 : 2);
+                for(let i = 0; i < len; i++) arr.push(val);
+            }
+            return arr;
+        }
+
+        function generarMiCodigo() {
+            let codigoText = comprimirDatos(datos);
+            document.getElementById('miCodigo').value = codigoText;
+            document.getElementById('qr-container').style.display = 'block';
+            
+            if (qrcodeInstance === null) {
+                qrcodeInstance = new QRCode(document.getElementById("qrcode"), {
+                    text: codigoText,
+                    width: 250,
+                    height: 250,
+                    colorDark : "#022055",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+            } else {
+                qrcodeInstance.clear();
+                qrcodeInstance.makeCode(codigoText);
+            }
+
+            setTimeout(() => {
+                document.getElementById('btnShareQR').style.display = 'block';
+            }, 300);
+        }
+
+        function descargarQR() {
+            const qrContainer = document.getElementById('qrcode');
+            const canvas = qrContainer.querySelector('canvas');
+            const img = qrContainer.querySelector('img');
+            
+            let dataUrl = "";
+            if (img && img.src && img.src.startsWith('data:image')) {
+                dataUrl = img.src;
+            } else if (canvas) {
+                dataUrl = canvas.toDataURL("image/png");
+            }
+            
+            if (dataUrl) {
+                const enlace = document.createElement('a');
+                enlace.href = dataUrl;
+                enlace.download = 'Mi_Album_Panini_QR.png';
+                document.body.appendChild(enlace);
+                enlace.click();
+                document.body.removeChild(enlace);
+            } else {
+                alert("Hubo un error. Genera el código e intenta de nuevo.");
+            }
+        }
+
+        function copiarCodigo() {
+            const textarea = document.getElementById('miCodigo');
+            textarea.select();
+            document.execCommand('copy');
+            alert("¡Código de app copiado al portapapeles!");
+        }
+
+        function compararCodigo() {
+            try {
+                let textAmigo = document.getElementById('codigoAmigo').value.trim();
+                if(!textAmigo) { alert("Pega el código de tu amigo primero."); return; }
+                
+                let datosAmigo;
+                if (textAmigo.startsWith("P26:")) {
+                    datosAmigo = descomprimirDatos(textAmigo);
+                } else {
+                    let parsed = JSON.parse(atob(textAmigo));
+                    datosAmigo = Array(TOTAL).fill(1);
+                    parsed.f.forEach(i => datosAmigo[i] = 0);
+                    parsed.r.forEach(i => datosAmigo[i] = 2);
+                }
+                
+                let meSirven = [];
+                let leSirven = [];
+
+                for(let i = 0; i < TOTAL; i++) {
+                    if (datosAmigo[i] >= 2 && datos[i] === 0) meSirven.push(i);
+                    if (datos[i] >= 2 && datosAmigo[i] === 0) leSirven.push(i);
+                }
+
+                document.getElementById('meSirven').innerText = meSirven.length > 0 ? meSirven.map(getNombreVista).join(', ') : "Ninguna 😢";
+                document.getElementById('leSirven').innerText = leSirven.length > 0 ? leSirven.map(getNombreVista).join(', ') : "Ninguna 😢";
+                
+                document.getElementById('resultadosIntercambio').style.display = 'block';
+            } catch(e) {
+                alert("El código ingresado no es válido o está incompleto.");
+            }
+        }
+
+        renderizarGrid();
+    </script>
+</body>
+</html>
