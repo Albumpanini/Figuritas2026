@@ -145,19 +145,20 @@
     </div>
 
     <script>
+        // Los 48 clasificados oficiales al Mundial 2026 (Lista exacta proveída y ordenada alfabéticamente)
         const equiposData = [
-            {n:"Argentina", f:"🇦🇷"}, {n:"Australia", f:"🇦🇺"}, {n:"Austria", f:"🇦🇹"}, {n:"Bélgica", f:"🇧🇪"},
-            {n:"Brasil", f:"🇧🇷"}, {n:"Camerún", f:"🇨🇲"}, {n:"Canadá", f:"🇨🇦"}, {n:"Chile", f:"🇨🇱"},
-            {n:"Colombia", f:"🇨🇴"}, {n:"Corea del Sur", f:"🇰🇷"}, {n:"Costa Rica", f:"🇨🇷"}, {n:"Croacia", f:"🇭🇷"},
-            {n:"Dinamarca", f:"🇩🇰"}, {n:"Ecuador", f:"🇪🇨"}, {n:"Egipto", f:"🇪🇬"}, {n:"Emiratos Árabes", f:"🇦🇪"},
-            {n:"España", f:"🇪🇸"}, {n:"Estados Unidos", f:"🇺🇸"}, {n:"Francia", f:"🇫🇷"}, {n:"Ghana", f:"🇬🇭"},
-            {n:"Honduras", f:"🇭🇳"}, {n:"Inglaterra", f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"}, {n:"Irak", f:"🇮🇶"}, {n:"Irán", f:"🇮🇷"},
-            {n:"Italia", f:"🇮🇹"}, {n:"Jamaica", f:"🇯🇲"}, {n:"Japón", f:"🇯🇵"}, {n:"Marruecos", f:"🇲🇦"},
-            {n:"México", f:"🇲🇽"}, {n:"Nigeria", f:"🇳🇬"}, {n:"Nueva Zelanda", f:"🇳🇿"}, {n:"Países Bajos", f:"🇳🇱"},
-            {n:"Panamá", f:"🇵🇦"}, {n:"Paraguay", f:"🇵🇾"}, {n:"Perú", f:"🇵🇪"}, {n:"Polonia", f:"🇵🇱"},
-            {n:"Portugal", f:"🇵🇹"}, {n:"Qatar", f:"🇶🇦"}, {n:"Senegal", f:"🇸🇳"}, {n:"Serbia", f:"🇷🇸"},
-            {n:"Suecia", f:"🇸🇪"}, {n:"Suiza", f:"🇨🇭"}, {n:"Túnez", f:"🇹🇳"}, {n:"Turquía", f:"🇹🇷"},
-            {n:"Ucrania", f:"🇺🇦"}, {n:"Uruguay", f:"🇺🇾"}, {n:"Venezuela", f:"🇻🇪"}, {n:"Alemania", f:"🇩🇪"}
+            {n:"Alemania", f:"🇩🇪"}, {n:"Arabia Saudita", f:"🇸🇦"}, {n:"Argelia", f:"🇩🇿"}, {n:"Argentina", f:"🇦🇷"},
+            {n:"Australia", f:"🇦🇺"}, {n:"Austria", f:"🇦🇹"}, {n:"Bélgica", f:"🇧🇪"}, {n:"Bosnia y Herzegovina", f:"🇧🇦"},
+            {n:"Brasil", f:"🇧🇷"}, {n:"Cabo Verde", f:"🇨🇻"}, {n:"Canadá", f:"🇨🇦"}, {n:"Colombia", f:"🇨🇴"},
+            {n:"Corea del Sur", f:"🇰🇷"}, {n:"Costa de Marfil", f:"🇨🇮"}, {n:"Croacia", f:"🇭🇷"}, {n:"Curazao", f:"🇨🇼"},
+            {n:"Ecuador", f:"🇪🇨"}, {n:"Egipto", f:"🇪🇬"}, {n:"Escocia", f:"🏴󠁧󠁢󠁳󠁣󠁴󠁿"}, {n:"España", f:"🇪🇸"},
+            {n:"Estados Unidos", f:"🇺🇸"}, {n:"Francia", f:"🇫🇷"}, {n:"Ghana", f:"🇬🇭"}, {n:"Haití", f:"🇭🇹"},
+            {n:"Inglaterra", f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"}, {n:"Irak", f:"🇮🇶"}, {n:"Irán", f:"🇮🇷"}, {n:"Japón", f:"🇯🇵"},
+            {n:"Jordania", f:"🇯🇴"}, {n:"Marruecos", f:"🇲🇦"}, {n:"México", f:"🇲🇽"}, {n:"Noruega", f:"🇳🇴"},
+            {n:"Nueva Zelanda", f:"🇳🇿"}, {n:"Países Bajos", f:"🇳🇱"}, {n:"Panamá", f:"🇵🇦"}, {n:"Paraguay", f:"🇵🇾"},
+            {n:"Portugal", f:"🇵🇹"}, {n:"Qatar", f:"🇶🇦"}, {n:"RD Congo", f:"🇨🇩"}, {n:"República Checa", f:"🇨🇿"},
+            {n:"Senegal", f:"🇸🇳"}, {n:"Sudáfrica", f:"🇿🇦"}, {n:"Suecia", f:"🇸🇪"}, {n:"Suiza", f:"🇨🇭"},
+            {n:"Túnez", f:"🇹🇳"}, {n:"Turquía", f:"🇹🇷"}, {n:"Uruguay", f:"🇺🇾"}, {n:"Uzbekistán", f:"🇺🇿"}
         ];
 
         const TOTAL_INTRO = 20;
@@ -173,7 +174,6 @@
         let stickerElements = Array(TOTAL).fill(null);
         let qrcodeInstance = null; 
 
-        // Modificado para que la etiqueta de la intro empiece en 00 y termine en 19
         function getNumeroEtiqueta(index) {
             if (index < TOTAL_INTRO) return index === 0 ? "00" : index.toString();
             if (index >= (TOTAL - TOTAL_COCA)) return 'C' + (index - (TOTAL - TOTAL_COCA) + 1).toString();
